@@ -1,7 +1,7 @@
 # Technical Research & Conceptual Analysis
 ### Task 3 — Handwritten Digits Recognition Neural Network, Alex Eagles Bank
 
-All three topics (A, B, C) are covered below.
+All three topics (A and B) are covered below.
 
 ### Topic A: Escaping Traps (Local Minima vs. Saddle Points)
 
@@ -92,50 +92,3 @@ per-parameter adaptivity can sometimes settle into sharper minima that generaliz
 worse, whereas plain SGD with a carefully tuned learning-rate schedule and momentum can find
 flatter minima that generalize better, at the cost of needing more manual tuning effort.
 
----
-
-### Topic C: Weight Initialization Strategies
-
-**The "all-zeros" trap (symmetry breaking)**
-
-If every weight in a layer is initialized to the same constant (zero or otherwise), every
-neuron in that layer computes the exact same function of the input, because they all start
-with identical weights and see identical inputs. During backpropagation, the gradient with
-respect to each of those neurons' weights is therefore also identical, so every neuron gets
-updated in exactly the same way at every step. The layer effectively behaves as if it had only
-a single neuron, no matter how many units it actually contains — the neurons never
-"differentiate" from each other. This is why weights (though not necessarily biases) must be
-initialized with some randomness: it breaks the symmetry so different neurons can learn
-different features.
-
-**Naive random initialization (vanishing/exploding activations)**
-
-Randomness alone isn't sufficient, though — the *scale* of the random values matters a great
-deal in deep networks. If initial weights are too small, each layer's output shrinks relative
-to its input (since output variance scales with weight variance times the number of inputs
-summed), so activations (and, during backprop, gradients) shrink geometrically as they pass
-through many layers, eventually vanishing to near-zero and stalling learning in early layers.
-If initial weights are too large, the opposite happens: activations and gradients grow
-geometrically layer after layer, exploding into very large or unstable (even `NaN`) values.
-Both failure modes get worse as networks get deeper, since the shrinking or growing compounds
-multiplicatively across layers.
-
-**Modern heuristics: Xavier/Glorot and He/Kaiming initialization**
-
-The core intuition behind both schemes is the same: choose the variance of the initial weights
-so that the variance of the signal is roughly preserved as it passes through a layer — neither
-shrinking nor growing — in both the forward pass (activations) and the backward pass
-(gradients). This means the initialization variance is chosen based on the number of input and
-output connections a layer has (`fan_in` and `fan_out`), rather than picking an arbitrary fixed
-scale.
-
-Xavier/Glorot initialization derives its variance assuming a linear or near-linear activation
-around zero, which is a reasonable approximation for **Tanh** (and Sigmoid) since those
-functions behave close to linearly for inputs near zero and are symmetric around zero. He/Kaiming
-initialization instead accounts for **ReLU**, which zeros out roughly half of its inputs (all the
-negative ones) — this halves the effective variance passed forward compared to a linear
-activation, so He initialization uses a larger variance (scaled by a factor of 2 relative to
-Xavier's assumption) to compensate for that "lost" half. Because ReLU and its variants are the
-dominant activation in modern deep networks (including the MLP built in this notebook), He
-initialization is generally the recommended default whenever ReLU-family activations are used,
-while Xavier remains the better fit for Tanh/Sigmoid-based networks.
