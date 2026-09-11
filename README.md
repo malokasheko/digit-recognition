@@ -8,7 +8,7 @@ automated check/form processing pipeline.
 - `mnist_digit_recognition.ipynb` — data pipeline, model architecture, training/evaluation,
   and a custom inference function, plus the full research write-up inline.
 - `research_writeup.md` — standalone copy of the Part 2 technical research/conceptual analysis
-  (Topics A, B, and C).
+  (Topics A, B).
 - `requirements.txt` — Python dependencies.
 
 ## Running it
